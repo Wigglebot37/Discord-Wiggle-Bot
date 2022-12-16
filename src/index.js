@@ -1,6 +1,6 @@
 const { Client, GatewayIntentBits, EmbedBuilder, PermissionsBitField, Permissions, MessageManager, Embed, Collection, Events } = require(`discord.js`);
 const fs = require('fs');
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] }); 
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers] }); 
 
 client.commands = new Collection();
 
@@ -16,10 +16,21 @@ const commandFolders = fs.readdirSync("./src/commands");
     }
     client.handleEvents(eventFiles, "./src/events");
     client.handleCommands(commandFolders, "./src/commands");
+    
     client.login(process.env.token)
 })();
 
-client.on(Events.GuildMemberAdd, async (member) => {
+client.on('message', message=> {
+    introID='808569965548535830';
+    if(message.channel.id==introID) {
+        const role='1052826975657537578';
+        const getRole=member.guild.roles.cache.get(role);
+
+        member.roles.remove(getRole);
+    }
+})
+
+client.on(Events.GuildMemberAdd, member => {
     // Welcoming New Members
     const channelID='808775590990970880';
     const channel=member.guild.channels.cache.get(channelID)
@@ -29,17 +40,17 @@ client.on(Events.GuildMemberAdd, async (member) => {
 
     // Auto Assigning Roles
     const role='1052826975657537578';
-    const getRole=await member.guild.roles.cache.get(role);
+    const getRole=member.guild.roles.cache.get(role);
 
     member.roles.add(getRole);
 
     // Updating Member Count
-    const voiceChannel=guild.channels.cache.get('809265691923578922');
-    voiceChannel.setName(`Member Count: ${guild.memberCount.toLocaleString()}`);
+    const voiceChannel=member.guild.channels.cache.get('809265691923578922');
+    voiceChannel.setName(`Member Count: ${member.guild.memberCount.toLocaleString()}`);
 })
 
-client.on(Events.GuildMemberRemove, async (member) => {
+client.on(Events.GuildMemberRemove, member => {
     // Updating Member Count
-    const voiceChannel=guild.channels.cache.get('809265691923578922');
-    voiceChannel.setName(`Member Count: ${guild.memberCount.toLocaleString()}`);
+    const voiceChannel=member.guild.channels.cache.get('809265691923578922');
+    voiceChannel.setName(`Member Count: ${member.guild.memberCount.toLocaleString()}`);
 })

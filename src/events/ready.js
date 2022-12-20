@@ -4,23 +4,24 @@ module.exports = {
     name: 'ready',
     once: true,
     async execute(client) {
-        console.log('Ready!');
+        console.log('Bot Online!');
+        const activities=[
+            'with fire',
+            'the piano',
+            'it cool',
+            'Fireboy & Watergirl',
+            'Outer Wilds',
+            'Doom',
+            'Portal 2',
+            'Mother 3',
+            'Project Everett',
+            'My favorite OST'
+        ];
+        client.user.setPresence({ activities: [{ name: `My favorite OST`}]});
 
-        async function pickPresence () {
-            const option = Math.floor(Math.random() * statusArray.length);
-            try {
-                await client.user.setPresence({
-                    activities: [
-                        {
-                            name: statusArray[option].content,
-                            type: statusArray[option].type,
-                        },
-                    ],
-                    status: statusArray[option].status
-                })
-            } catch (error) {
-                console.error(error);
-            }
-        }
+        setInterval(() => {
+            const status=activities[Math.floor(Math.random()*activities.length)];
+            client.user.setPresence({ activities: [{ name: `${status}`}]});
+        }, 600000);
     },
 };
